@@ -5,6 +5,7 @@ import kea.grocery_delivery.entities.ProductOrder;
 import kea.grocery_delivery.repositories.DeliveryRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -17,6 +18,10 @@ public class DeliveryService {
 
     public Optional<Delivery> findDeliveryById(Long id) {
         return deliveryRepository.findById(id);
+    }
+
+    public List<Delivery> findAllDeliveries() {
+        return deliveryRepository.findAll();
     }
 
     public Delivery createDelivery(Delivery request) {

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
 import java.util.Optional;
 
 @Controller
@@ -56,6 +57,12 @@ public class DeliveryController {
 
 
         return ResponseEntity.status(HttpStatus.OK).body(delivery.get());
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Delivery>> findAllDeliveries() {
+        List<Delivery> deliveries = deliveryService.findAllDeliveries();
+        return ResponseEntity.status(HttpStatus.OK).body(deliveries);
     }
 
     // Each "product order" can only be added to one delivery, which makes sense logically, since it should only be
