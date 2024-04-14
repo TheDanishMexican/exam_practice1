@@ -24,7 +24,7 @@ public class Delivery {
     @OneToMany
     private List<ProductOrder> productOrders;
 
-    private String totalWeight() {
+    public String totalWeight() {
         double sum = 0;
 
         for (ProductOrder productOrder : productOrders) {
@@ -34,7 +34,7 @@ public class Delivery {
         return "Total weight: " + sum + " grams";
     }
 
-    private String totalPrice() {
+    public String totalPrice() {
         double sum = 0;
 
         for (ProductOrder productOrder : productOrders) {

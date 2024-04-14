@@ -9,9 +9,7 @@ import kea.grocery_delivery.services.ProductOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
@@ -41,6 +39,23 @@ public class DeliveryController {
         } catch (Exception exception) {
             throw new RuntimeException("Could not create delivery", exception);
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Delivery> findDelivery(@PathVariable Long id) {
+        Optional<Delivery> delivery = deliveryService.findDeliveryById(id);
+        if (delivery.isEmpty()) {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+        System.out.println("\n"+
+                            "For delivery ID: " + id + "\n" +
+                            delivery.get().totalWeight()+"\n"+
+                            delivery.get().totalPrice()+
+                            "\n");
+
+
+        return ResponseEntity.status(HttpStatus.OK).body(delivery.get());
     }
 
     // Each "product order" can only be added to one delivery, which makes sense logically, since it should only be
