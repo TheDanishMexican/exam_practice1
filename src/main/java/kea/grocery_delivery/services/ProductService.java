@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProductService {
@@ -18,32 +19,31 @@ public class ProductService {
         this.productRepository = productRepository;
     }
 
-    public ProductDto getProductById(Long id) {
-        return productRepository.findById(id).map(this::toDto).orElse(null);
+    public Optional<ProductDto> getProductById(Long id) {
+            return productRepository.findById(id).map(this::toDto);
     }
 
     public List<ProductDto> getAllProducts() {
-        return productRepository.findAll().stream().map(this::toDto).toList();
+        List<Product> products = productRepository.findAll();
+        if (products.isEmpty()) {
+            throw new RuntimeException("No products found");
+        }
+        return products.stream().map(this::toDto).toList();
     }
 
-    public ProductDto getByName(String name) {
-        return toDto(productRepository.findByName(name));
+    public Optional<ProductDto> getByName(String name) {
+        return productRepository.findByName(name).map(this::toDto);
     }
 
-    public ResponseEntity deleteProduct(Long id) {
-        if (productRepository.existsById(id)) {
+    public void deleteProduct(Long id) {
+        try {
             productRepository.deleteById(id);
-            return ResponseEntity.ok().build();
-        } else {
-            return ResponseEntity.notFound().build();
+        } catch (Exception exception) {
+            throw new RuntimeException("Could not delete product", exception);
         }
     }
 
     public ProductDto addProduct(ProductDto request) {
-        if (request.id() != null) {
-            throw new IllegalArgumentException("Product ID must not be provided when adding a new product");
-        }
-
         Product newProduct = new Product();
         updateProduct(newProduct, request);
         productRepository.save(newProduct);
