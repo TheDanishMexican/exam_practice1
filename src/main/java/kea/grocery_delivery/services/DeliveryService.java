@@ -42,8 +42,4 @@ public class DeliveryService {
         original.getProductOrders().add(productOrder);
         deliveryRepository.save(original);
     }
-
-    public void calculateTotals() {
-
-    }
 }

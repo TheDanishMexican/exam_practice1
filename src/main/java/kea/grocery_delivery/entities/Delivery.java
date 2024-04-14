@@ -24,23 +24,23 @@ public class Delivery {
     @OneToMany
     private List<ProductOrder> productOrders;
 
-    public String totalWeight() {
+    public double totalWeight() {
         double sum = 0;
 
         for (ProductOrder productOrder : productOrders) {
             sum += productOrder.getProduct().getWeightInGrams();
         }
 
-        return "Total weight: " + sum + " grams";
+        return sum;
     }
 
-    public String totalPrice() {
+    public double totalPrice() {
         double sum = 0;
 
         for (ProductOrder productOrder : productOrders) {
             sum += productOrder.getProduct().getPrice() * productOrder.getQuantity();
         }
 
-        return "Total price: " + sum + " DKK";
+        return sum;
     }
 }
