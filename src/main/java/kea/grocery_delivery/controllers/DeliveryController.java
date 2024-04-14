@@ -3,12 +3,12 @@ package kea.grocery_delivery.controllers;
 import kea.grocery_delivery.dtos.DeliveryWithProductOrderDto;
 import kea.grocery_delivery.entities.Delivery;
 import kea.grocery_delivery.entities.ProductOrder;
+import kea.grocery_delivery.repositories.ProductOrderRepository;
 import kea.grocery_delivery.services.DeliveryService;
 import kea.grocery_delivery.services.ProductOrderService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -21,10 +21,12 @@ import java.util.Optional;
 public class DeliveryController {
     private final DeliveryService deliveryService;
     private final ProductOrderService productOrderService;
+    private final ProductOrderRepository productOrderRepository;
 
-    public DeliveryController(DeliveryService deliveryService, ProductOrderService productOrderService) {
+    public DeliveryController(DeliveryService deliveryService, ProductOrderService productOrderService, ProductOrderRepository productOrderRepository) {
         this.deliveryService = deliveryService;
         this.productOrderService = productOrderService;
+        this.productOrderRepository = productOrderRepository;
     }
 
     @PostMapping
@@ -41,15 +43,20 @@ public class DeliveryController {
         }
     }
 
+    // Each "product order" can only be added to one delivery, which makes sense logically, since it should only be
+    // delivered once.
     @PostMapping("/orders")
     public ResponseEntity<Delivery> addOrderToDelivery(@RequestBody DeliveryWithProductOrderDto request) {
         Optional<ProductOrder> order = productOrderService.findOrderById(request.productOrderId());
         Optional<Delivery> delivery = deliveryService.findDeliveryById(request.deliveryId());
-        if (order.isEmpty() || delivery.isEmpty()) {
+        if (order.isEmpty() || delivery.isEmpty() || order.get().isDeliveryAdded()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
 
         try {
+            order.get().setDeliveryAdded(true);
+            productOrderRepository.save(order.get());
+
             deliveryService.addProductOrderToDelivery(delivery.get() ,order.get());
             return ResponseEntity.status(HttpStatus.CREATED).body(delivery.get());
         } catch (Exception exception) {

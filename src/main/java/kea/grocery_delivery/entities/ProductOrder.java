@@ -18,4 +18,6 @@ public class ProductOrder {
     private Product product;
 
     private int quantity;
+
+    private boolean deliveryAdded = false;
 }
