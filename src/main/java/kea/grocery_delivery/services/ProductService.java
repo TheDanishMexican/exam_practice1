@@ -52,10 +52,7 @@ public class ProductService {
     }
 
     public ProductDto editProduct(Long id, ProductDto request) {
-        if (request.id() != id) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "You cannot change the id of an existing product");
-        }
-        Product productToEdit = productRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found"));
+        Product productToEdit = productRepository.findById(id).get();
         updateProduct(productToEdit, request);
         productRepository.save(productToEdit);
         return toDto(productToEdit);

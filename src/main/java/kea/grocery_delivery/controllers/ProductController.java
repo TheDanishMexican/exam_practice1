@@ -64,15 +64,30 @@ public class ProductController {
 
     @PostMapping
     public ResponseEntity<ProductDto> addProduct(@RequestBody ProductDto request) {
+        if (request.id() != null || productService.getByName(request.name()).isPresent()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
+
         try {
             ProductDto addedProduct = productService.addProduct(request);
             return ResponseEntity.status(HttpStatus.CREATED).body(addedProduct);
-        } catch (IllegalArgumentException exception) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+        } catch (RuntimeException exception) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
         }
     }
 
-    public void updateProduct(@PathVariable Long id, ProductDto request) {
-        productService.editProduct(id, request);
+    @PutMapping("/{id}")
+    public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody ProductDto request) {
+        Optional<ProductDto> productToUpdate = productService.getProductById(id);
+
+        if (productToUpdate.isPresent() && productService.getByName(request.name()).isEmpty()) {
+            return ResponseEntity.status(HttpStatus.ACCEPTED).body(productService.editProduct(id, request));
+        } else {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
+        }
     }
+
+
+
+
 }
