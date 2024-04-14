@@ -20,6 +20,10 @@ public class ProductOrderService {
         this.productRepository = productRepository;
     }
 
+    public Optional<ProductOrder> findOrderById(Long id) {
+        return productOrderRepository.findById(id);
+    }
+
     public ProductOrder createProductOrder(ProductOrderDto request) {
         ProductOrder newProductOrder = new ProductOrder();
         updateProductOrder(newProductOrder, request);
