@@ -23,15 +23,13 @@ public class Van {
     @OneToMany
     private List<Delivery> deliveries;
 
-    public int remainingCapacity() {
-        int usedCapacity = 0;
+    public int getCombinedWeightInKg() {
+        int totalWeight = 0;
 
-        for (Delivery delivery : deliveries) {
-            System.out.println("Delivery total weight = " + delivery.totalWeight() + " grams");
-            double deliveryWeightInKg = delivery.totalWeight() / 1000.0; // Convert grams to kilograms
-            usedCapacity += (int) deliveryWeightInKg;
+        for (Delivery delivery : getDeliveries()) {
+            totalWeight += delivery.getTotalWeightInKg();
         }
-
-        return capacityInKg - usedCapacity;
+        System.out.println("Total weight in van : " + totalWeight + " kg");
+        return totalWeight;
     }
 }

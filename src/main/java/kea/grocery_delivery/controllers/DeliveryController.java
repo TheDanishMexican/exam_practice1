@@ -51,7 +51,7 @@ public class DeliveryController {
 
         System.out.println("\n"+
                             "For delivery ID: " + id + "\n" +
-                            delivery.get().totalWeight()+"\n"+
+                            delivery.get().getTotalWeightInKg()+"\n"+
                             delivery.get().totalPrice()+
                             "\n");
 

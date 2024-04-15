@@ -24,14 +24,14 @@ public class Delivery {
     @OneToMany
     private List<ProductOrder> productOrders;
 
-    public double totalWeight() {
-        double sum = 0;
+    public int getTotalWeightInKg() {
+        int totalWeight = 0;
 
         for (ProductOrder productOrder : productOrders) {
-            sum += productOrder.getProduct().getWeightInGrams();
+            totalWeight += productOrder.getTotalWeightInGrams();
         }
 
-        return sum;
+        return (int)Math.ceil((double)totalWeight / 1000);
     }
 
     public double totalPrice() {

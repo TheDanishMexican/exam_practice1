@@ -20,4 +20,9 @@ public class ProductOrder {
     private int quantity;
 
     private boolean deliveryAdded = false;
+
+    public int getTotalWeightInGrams() {
+        return quantity * product.getWeightInGrams();
+    }
+
 }

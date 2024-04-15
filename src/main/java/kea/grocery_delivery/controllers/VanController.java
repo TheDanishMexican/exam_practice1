@@ -29,6 +29,7 @@ public class VanController {
     public ResponseEntity<Van> addDeliveryToVan(@RequestBody VanWithDeliveryDto request) {
         Optional<Van> van =  vanService.findById(request.vanId());
         Optional<Delivery> delivery = deliveryService.findDeliveryById(request.deliveryId());
+
         if (van.isEmpty() || delivery.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
     }

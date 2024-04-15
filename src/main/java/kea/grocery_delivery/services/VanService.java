@@ -22,11 +22,9 @@ public class VanService {
     }
 
     public void addDeliveryToVan(Van van, Delivery delivery) {
-        if (van.remainingCapacity() < 0) {
+        if (van.getCombinedWeightInKg() + delivery.getTotalWeightInKg() > van.getCapacityInKg()) {
             throw new IllegalArgumentException("Van is full");
         }
-
-        System.out.println("Van remaining capacity: " + van.remainingCapacity() + " kg");
 
         van.getDeliveries().add(delivery);
         vanRepository.save(van);
