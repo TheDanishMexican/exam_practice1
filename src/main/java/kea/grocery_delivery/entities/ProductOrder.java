@@ -25,4 +25,8 @@ public class ProductOrder {
         return quantity * product.getWeightInGrams();
     }
 
+    public Long getProductId() {
+        return product.getId();
+    }
+
 }

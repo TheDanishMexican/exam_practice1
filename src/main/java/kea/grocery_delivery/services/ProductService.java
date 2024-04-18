@@ -2,6 +2,7 @@ package kea.grocery_delivery.services;
 
 import kea.grocery_delivery.dtos.ProductDto;
 import kea.grocery_delivery.entities.Product;
+import kea.grocery_delivery.entities.ProductOrder;
 import kea.grocery_delivery.repositories.ProductRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -14,9 +15,11 @@ import java.util.Optional;
 @Service
 public class ProductService {
     private final ProductRepository productRepository;
+    private final ProductOrderService productOrderService;
 
-    public ProductService(ProductRepository productRepository) {
+    public ProductService(ProductRepository productRepository, ProductOrderService productOrderService) {
         this.productRepository = productRepository;
+        this.productOrderService = productOrderService;
     }
 
     public Optional<ProductDto> getProductById(Long id) {

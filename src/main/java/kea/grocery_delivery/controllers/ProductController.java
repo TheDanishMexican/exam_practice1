@@ -1,6 +1,8 @@
 package kea.grocery_delivery.controllers;
 
 import kea.grocery_delivery.dtos.ProductDto;
+import kea.grocery_delivery.entities.ProductOrder;
+import kea.grocery_delivery.services.ProductOrderService;
 import kea.grocery_delivery.services.ProductService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,10 +17,12 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
 
-    ProductService productService;
+    private final ProductService productService;
+    private final ProductOrderService productOrderService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ProductOrderService productOrderService) {
         this.productService = productService;
+        this.productOrderService = productOrderService;
     }
 
     @GetMapping("/{id}")
@@ -52,13 +56,23 @@ public class ProductController {
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<ProductDto> deleteProduct(@PathVariable Long id) {
+    public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
+        List<ProductOrder> productOrders = productOrderService.getAllProductOrders();
+
+        // Check if any ProductOrder has the specified product ID
+        boolean hasAssociatedOrders = productOrders.stream()
+                .anyMatch(order -> order.getProductId().equals(id));
+
         Optional<ProductDto> optionalProduct = productService.getProductById(id);
+
         if (optionalProduct.isPresent()) {
+            if (hasAssociatedOrders) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).build();
+            }
             productService.deleteProduct(id);
-            return ResponseEntity.noContent().build();
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
         } else {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Product not found");
+            return ResponseEntity.notFound().build();
         }
     }
 

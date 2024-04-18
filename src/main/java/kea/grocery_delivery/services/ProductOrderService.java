@@ -8,6 +8,7 @@ import kea.grocery_delivery.repositories.ProductOrderRepository;
 import kea.grocery_delivery.repositories.ProductRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -18,6 +19,15 @@ public class ProductOrderService {
     public ProductOrderService(ProductOrderRepository productOrderRepository, ProductRepository productRepository) {
         this.productOrderRepository = productOrderRepository;
         this.productRepository = productRepository;
+    }
+
+    public List<ProductOrder> getAllProductOrders() {
+        List<ProductOrder> orders = productOrderRepository.findAll();
+
+        if (orders.isEmpty()) {
+            System.out.println("No orders found");
+        }
+        return orders;
     }
 
     public Optional<ProductOrder> findOrderById(Long id) {
